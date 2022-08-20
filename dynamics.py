@@ -85,6 +85,6 @@ def odes3(theta, x, h, m1, m2, E, V, G):
     return [duDtheta, d2uDtheta2]
 
 
-def theorical_orbit(h, mu, e, theta):
+def theoretical_orbit(h, mu, e, theta):
     r = (h*h/mu)/(1+e*(e*np.cos(theta)))
     return r
