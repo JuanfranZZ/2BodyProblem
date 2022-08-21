@@ -20,12 +20,18 @@ Sol = body_decoder(cuerpos['Sol'])
 # Jupiter Earth system
 theta0 = 0
 thetafin = 2*np.pi
-twoBodySystem = TwoBodySystem(Sol, Jupiter)
+twoBodySystem = TwoBodySystem(Sol, Tierra)
 r0 = twoBodySystem.r_distance
 v0 = twoBodySystem.v_module
 h0 = twoBodySystem.spec_angular_momemtum
 mu = twoBodySystem.mu
 excen = np.linalg.norm(twoBodySystem.eccentricity)
+
+print("r0:", r0)
+print("v0:", v0)
+print("h0:", h0)
+print("mu:", mu)
+print("excentricidad:", excen)
 
 # Calcular
 orbit = twoBodySystem.calculate_orbit(theta0, thetafin)

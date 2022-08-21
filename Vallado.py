@@ -76,7 +76,7 @@ class TwoBodySystem(BodySystem):
 
         # define dynamic equations
         def dynamic(theta, u):
-            y = np.zeros((2,1)).reshape((2,))
+            y = np.zeros((2, 1)).reshape((2,))
             y[0] = u[1]
             dduddtheta = -u[0] + self.mu/(h*h)
             y[1] = dduddtheta

@@ -12,7 +12,7 @@ def plot(rx, ry, rz, title="", excen=None, mu=None, h=None, theta_fin=None):
     ax.view_init(elev=90, azim=-90)
 
     # plot trajectory and starting point
-    # ax.plot(rx, ry, rz)
+
     ax.plot(rx[0], ry[0], rz[0], 'ro')
     ax.plot(0, 0, 0, 'bo', markersize=14)
 
@@ -20,12 +20,17 @@ def plot(rx, ry, rz, title="", excen=None, mu=None, h=None, theta_fin=None):
 
     # Theoretical orbit
     if excen and mu and h and theta_fin:
-        r_theo = theoretical_orbit(h, mu, excen, np.linspace(0, theta_fin, 10000))
-        theta_theo = np.linspace(0, theta_fin, 10000)
+        r_theo = theoretical_orbit(h, mu, excen, np.linspace(0, theta_fin, rx.size))
+        theta_theo = np.linspace(0, theta_fin, rx.size)
         rx_theo, ry_theo, rz_theo = polar2cartesian(r_theo, theta_theo, 0)
-        ax.plot(rx_theo, ry_theo, rz_theo, 'g-')
+        ax.plot(rx_theo, ry_theo, rz_theo, 'g--')
 
-    plt.legend(['Trajectory', 'Starting Position', 'theorical'])
+    plt.legend(['Posicion inicial', 'Punto focal', 'Numérica', 'Teórica'])
     plt.title(title)
 
+    plt.show()
+
+    fig2 = plt.figure(figsize=(10, 10))
+    error = np.sqrt((rx-rx_theo)**2 + (ry-ry_theo)**2)
+    plt.plot(error)
     plt.show()
