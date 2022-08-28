@@ -1,58 +1,82 @@
 {
+  "constantes": {
+    "G": {
+      "value": 6.673848e-20,
+      "unit": "km^3/(kg*s^2)"
+    }
+  },
+  "unidades":{
+    "mass": "kg",
+    "pos": "km",
+    "vel": "km/s"
+  },
+  "descripcion": {
+    "mass": "masa del objeto",
+    "pos": "vector posición en el perihelio",
+    "vel" : "velocidad orbital media"
+  },
   "Sol": {
     "name": "Sol",
     "mass": 1.989e30,
     "pos": [0,0,0],
-    "vel": [0,0,0]
+    "vel": 0
   },
   "planetas": [{
     "Mercurio": {
       "name": "Mercurio",
-      "mass": 3.3022e23,
-      "pos": [57e6,0,0],
-      "vel": [0,47.87,0]
+      "mass":  3.3022e23,
+      "pos": [46.001009e6,0,0],
+      "vel": 47.87,
+      "ecc": 0.20563069
     }
   ,
   "Venus": {
     "name": "Venus",
     "mass": 4.8685e24,
-    "pos": [108e6,0,0],
-    "vel": [0,35.02,0]
+    "pos": [107.47617e6,0,0],
+    "vel": 35.02,
+    "ecc": 0.0068
   },
   "Jupiter": {
     "name": "Jupiter",
     "mass": 1.8986e27,
-    "pos": [780e6,0,0],
-    "vel": [0,13.07,0]
+    "pos": [740.679835e6,0,0],
+    "vel": 13.07,
+    "ecc": 0.04839266
   },
   "Saturno": {
     "name": "Saturno",
     "mass": 5.6846e26,
-    "pos": [1437e6,0,0],
-    "vel": [0,9.69,0]
+    "pos": [1349.823615e6,0,0],
+    "vel": 9.69,
+    "ecc": 0.0541506
   },
   "Neptuno": {
     "name": "Neptuno",
     "mass": 10.243e25,
-    "pos": [4530e6,0,0],
-    "vel": [0,5.43,0]
+    "pos": [4459.753056e6,0,0],
+    "vel": 5.43,
+    "ecc": 0.008585870
   },
   "Urano": {
     "name": "Urano",
     "mass": 8.6810e25,
-    "pos": [2871e6,0,0],
-    "vel": [0,6.81,0]
+    "pos": [2734.998229e6,0,0],
+    "vel": 6.81,
+    "ecc": 0.044405586
   },
   "Tierra": {
     "name": "Tierra",
     "mass": 5.9736e24,
-    "pos": [149e6,0,0],
-    "vel": [0,29.78,0]
+    "pos": [147.098291e6,0,0],
+    "vel": 29.78,
+    "ecc": 0.01671022
   },
   "Marte":{
     "name":  "Marte",
     "mass": 6.4185e23,
-    "pos": [228e6,0,0],
-    "vel": [0,24.077,0]
+    "pos": [206.645215e6,0,0],
+    "vel": 24.077,
+    "ecc": 0.09341233
   }}]
 }
