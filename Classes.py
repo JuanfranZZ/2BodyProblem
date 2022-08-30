@@ -40,7 +40,7 @@ class Body:
 def body_decoder(obj):
     if "ecc" in obj:
         e = obj["ecc"]
-        vel = obj["vel"]*(1+e)/(1-e)  # afelio vel
+        vel = obj["vel"]*np.sqrt(2/(1-e)-1) #perihelio vel
     else:
         vel = obj["vel"]
     return Body(obj["name"], obj["mass"], pos=obj["pos"], vel=[0, vel, 0])
@@ -103,7 +103,7 @@ class TwoBodySystem(BodySystem):
         # take initial conditions
         r0 = self.r_distance
         drdt0 = self.vr_module  # radial velocity projection
-        h = self.spec_angular_momemtum
+        h = self.spec_angular_momemtum_module
         u0 = [1/r0, drdt0/(-h)]
 
         # theta_span = np.linspace(theta0, thetafin, int(1/self.get_tolerance()))
@@ -123,8 +123,8 @@ class TwoBodySystem(BodySystem):
         return sol_r, sol_theta
 
     def _orbit_eccentricity(self):
-        # return np.linalg.norm((np.dot((self.v_module**2 - self.mu/self.r_distance), self.r) - np.dot(np.dot(self.r, self.v), self.v)) / self.mu)
         return np.sqrt(1 + 2*self.spec_angular_momemtum_module**2*self.spec_mec_energy/(self.mu**2))
+        # return np.linalg.norm(np.cross(self.v, self.spec_angular_momemtum)/self.mu - self.r/np.linalg.norm(self.r))
 
     def _specific_mechanical_energy(self):
         return self.vr_module ** 2 / 2 + self.V_ef()
@@ -136,4 +136,4 @@ class TwoBodySystem(BodySystem):
         return 1/2*(self.spec_angular_momemtum_module/self.r_distance)**2 + self.V()
 
     def _specific_angular_momentum(self):
-        return np.linalg.norm(np.cross(self.r, self.v))
+        return np.cross(self.r, self.v)
