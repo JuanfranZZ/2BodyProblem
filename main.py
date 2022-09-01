@@ -1,89 +1,57 @@
-from plotting import plot
-from aux_tools import polar2cartesian
-from potential import V_r, V_no_m,V_eff, V_Yukawa
-
+import json
 import numpy as np
-from scipy.integrate import odeint
-from scipy.integrate import solve_ivp
+from matplotlib import pyplot as plt
+from plotting import plot, polar2cartesian
+from Classes import TwoBodySystem, body_decoder, constant_decoder
 
-V = V_Yukawa
+# leer fichero de planetas
+planets_file = r"bodies.json"
+with open(planets_file) as file:
+    cuerpos = json.loads(file.read()) # https://starlust.org/the-planets-in-order-from-the-sun/
 
+# crear objetos de planetas
+# for s in planets:
+    # exec(f"{s} = body_decoder(planets['{s}'])")
 
-# MOVEMENT EQUATIONS:
-def odes(t, x, l, m, E):
-    # m1 = 2300  # kg
-    r = x[0]
-    phi = x[1]
-    print('t=', t)
-    print('x=', x)
-    print('l=', l)
-    print('m=', m)
-    print('E=', E)
-    print('V=', V(r, m))
-    print('=============')
+Tierra = body_decoder(cuerpos['planetas']['Tierra'])
+Tierra.set_velocity(Tierra.vel*0.001)
+Tierra.set_position(2*Tierra.pos)
+Tierra2 = body_decoder(cuerpos['planetas']['Tierra'])
+Tierra2.set_position([0,0,0])
+Tierra2.set_velocity([0,0,0])
+Jupiter = body_decoder(cuerpos['planetas']['Jupiter'])
+Venus = body_decoder(cuerpos['planetas']['Venus'])
+Sol = body_decoder(cuerpos['Sol'])
+constants = constant_decoder(cuerpos["constantes"])
+G = constants["G"]["value"]
 
-    # define system of equation
-    dphiDt = l / (m * r * r)
-    drDt = np.sqrt(2 / m * (E - V(r, m) - (l * l) / (2 * m * r * r)))
-    print('sqrt =', 2 / m * (E - V(r, m) - (l * l) / (2 * m * r * r)))
+# Jupiter Earth system
+theta0 = 0
+thetafin = 2*np.pi
+twoBodySystem = TwoBodySystem(G=G, body1=Tierra2, body2=Tierra)
+r0 = twoBodySystem.r_distance
+vr_0 = twoBodySystem.vr_module
+h0 = twoBodySystem.spec_angular_momemtum_module
+mu = twoBodySystem.mu
+E = twoBodySystem.spec_mec_energy
+excen = twoBodySystem.eccentricity
 
-    return [drDt, dphiDt]
+print("r0:", r0)
+print("vr_0:", vr_0)
+print("h0:", h0)
+print("mu:", mu)
+print("E:", E)
+print("excentricidad:", excen)
 
+# Calcular
+orbit = twoBodySystem.calculate_orbit(theta0, thetafin)
+r = orbit[0]
+theta = orbit[1]
 
-G = 6.6738480 * 10 ** (-11)  # Nm^2/Kg^2
-
-# Initial conditions
-
-r0 = (1350+6740)*1000 # m
-phi0 = 0  # rad
-v0 = 7181.9  # m/s 10*np.sqrt(G*m/r0)
-
-# Masses
-
-m1 = 2300  # kg Satellite
-m2 = 5.972*10**24  # kg Earth
-m = m1*m2/(m1+m2)
-print('m=', m)
-
-# Angular moment
-
-l = r0*m*v0
-
-# Tukawa example
-
-m = 1
-l = np.sqrt(0.5)
-r0 = 0.4
-v0 = l/(m*r0)
-
-print('V=', V(r0, m))
-E0 = V(r0, m) + 1/2*m*v0*v0
-print('E0=', E0)
-print('K0=', 1/2*m*v0*v0)
-print('---------------------------')
-
-tini = 0
-tfin = 10
-tolerance = 0.0001
-op = 2
-
-t = np.arange(tini, tfin, tolerance)  # for ideint
-t_span = (tini, tfin)  # for solve_ivp
-
-if op == 1:  # odeint
-    sol = odeint(odes, (r0, phi0), t, args=(l, m, E0), tfirst=True, full_output=1)
-    r = sol[0][:, 0]
-    phi = sol[0][:, 1]
-elif op == 2:  # RK45
-    sol = solve_ivp(odes, t_span, (r0, phi0), args=(l, m, E0), method='RK45', max_step=tolerance)
-    r = sol.y[0]
-    phi = sol.y[1]
-elif op == 3:  # LSODA
-    sol = solve_ivp(odes, t_span, (r0, phi0), args=(l, m, E0), method='LSODA', max_step=tolerance)
-    r = sol.y[0]
-    phi = sol.y[1]
-
-
-
-[rx, ry, rz] = polar2cartesian(r, phi, 0)
-plot(rx, ry, rz)
+# pintar resultados
+# theta = np.linspace(theta0, thetafin, np.size(r))
+plt.plot(r)
+plt.show()
+[rx, ry, rz] = polar2cartesian(r, theta, 0)
+title = "r0="+str(r0)+"; v0="+str(vr_0)
+plot(rx, ry, rz, title=title, excen=excen, h=h0, mu=mu, theta_fin=thetafin)
