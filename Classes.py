@@ -77,7 +77,7 @@ class BodySystem:
 
 
 class TwoBodySystem(BodySystem):
-    def __init__(self, G=None, body1=None, body2=None):
+    def __init__(self, G = None, body1=None, body2=None):
         super().__init__(G)
         self.bodies = [body1, body2]
         self.r = self.bodies[1].pos - self.bodies[0].pos
@@ -91,7 +91,7 @@ class TwoBodySystem(BodySystem):
         self.spec_angular_momemtum_module = np.linalg.norm(self.spec_angular_momemtum)
         self.spec_mec_energy = self._specific_mechanical_energy()
         self.eccentricity = self._orbit_eccentricity()
-        self._tolerance = 0.00001
+        self._tolerance = 0.0001
 
     def set_tolerance(self, tol):
         self._tolerance = tol
