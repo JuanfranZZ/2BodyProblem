@@ -14,11 +14,13 @@ with open(planets_file) as file:
     # exec(f"{s} = body_decoder(planets['{s}'])")
 
 Tierra = body_decoder(cuerpos['planetas']['Tierra'])
-Tierra.set_velocity(Tierra.vel*0.001)
-Tierra.set_position(2*Tierra.pos)
+Tierra1 = body_decoder(cuerpos['planetas']['Tierra'])
+Tierra1.set_velocity(Tierra.vel*0.001)
+Tierra1.set_position(2*Tierra.pos)
+Tierra1.mass = Tierra.mass/4
 Tierra2 = body_decoder(cuerpos['planetas']['Tierra'])
-Tierra2.set_position([0,0,0])
-Tierra2.set_velocity([0,0,0])
+Tierra2.set_position([0, 0, 0])
+Tierra2.set_velocity([0, 0, 0])
 Jupiter = body_decoder(cuerpos['planetas']['Jupiter'])
 Venus = body_decoder(cuerpos['planetas']['Venus'])
 Sol = body_decoder(cuerpos['Sol'])
@@ -28,7 +30,7 @@ G = constants["G"]["value"]
 # Jupiter Earth system
 theta0 = 0
 thetafin = 2*np.pi
-twoBodySystem = TwoBodySystem(G=G, body1=Tierra2, body2=Tierra)
+twoBodySystem = TwoBodySystem(G=G, body1=Tierra1, body2=Tierra2)
 r0 = twoBodySystem.r_distance
 vr_0 = twoBodySystem.vr_module
 h0 = twoBodySystem.spec_angular_momemtum_module
@@ -55,3 +57,10 @@ plt.show()
 [rx, ry, rz] = polar2cartesian(r, theta, 0)
 title = "r0="+str(r0)+"; v0="+str(vr_0)
 plot(rx, ry, rz, title=title, excen=excen, h=h0, mu=mu, theta_fin=thetafin)
+
+plt.plot(twoBodySystem.orbit_1[0], twoBodySystem.orbit_1[1])
+plt.plot(twoBodySystem.orbit_1[0][0], twoBodySystem.orbit_1[1][0], 'bo')
+plt.plot(twoBodySystem.orbit_2[0], twoBodySystem.orbit_2[1])
+plt.plot(twoBodySystem.orbit_2[0][0], twoBodySystem.orbit_2[1][0], 'o', color='orange')
+plt.plot(0, 0, 'ro')
+plt.show()

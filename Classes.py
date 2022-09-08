@@ -76,12 +76,26 @@ class BodySystem:
         self.bodies.remove(body)
 
 
+def pol2car(r, alpha):  # polar to cartesian
+    x = r * np.cos(alpha)
+    y = r * np.sin(alpha)
+    return np.array([x, y])
+
+
+def car2pol(x, y):  # cartesian to polar
+    r = np.sqrt(x**2 + y**2)
+    alpha = np.arctan2(y, x)
+    return np.array([r, alpha])
+
+
 class TwoBodySystem(BodySystem):
-    def __init__(self, G = None, body1=None, body2=None):
+    def __init__(self, G=None, body1=None, body2=None):
         super().__init__(G)
         self.bodies = [body1, body2]
+        self.r_cg = self._calculate_cg()
         self.r = self.bodies[1].pos - self.bodies[0].pos
         self.r_distance = np.linalg.norm(self.r)
+        self.cg_percentaje = np.linalg.norm(self._calculate_cg() - body1.pos)/self.r_distance
         self.v = self.bodies[1].vel - self.bodies[0].vel
         self.vr_module = np.linalg.norm(np.dot(self.r, self.v) / self.r_distance)
 
@@ -92,6 +106,15 @@ class TwoBodySystem(BodySystem):
         self.spec_mec_energy = self._specific_mechanical_energy()
         self.eccentricity = self._orbit_eccentricity()
         self._tolerance = 0.0001
+
+        self.rel_polar_orbit_2 = self.calculate_orbit(0, 2*np.pi)
+        self.rel_polar_cg = self.cg_percentaje * self.rel_polar_orbit_2[0], self.rel_polar_orbit_2[1]
+
+        self.rel_orbit_2 = pol2car(self.rel_polar_orbit_2[0], self.rel_polar_orbit_2[1])
+        self.rel_cg = pol2car(self.rel_polar_cg[0], self.rel_polar_cg[1])
+
+        # respect to CG (_recalculate_orbit_cg)
+        self.orbit_1, self.orbit_2 = self._recalculate_orbit_cg()
 
     def set_tolerance(self, tol):
         self._tolerance = tol
@@ -121,6 +144,19 @@ class TwoBodySystem(BodySystem):
         sol_r = 1/sol.y[0]
         sol_theta = sol.t
         return sol_r, sol_theta
+
+    def _calculate_cg(self):
+        cg = 0
+        total_mass = 0
+        for x in self.bodies:
+            cg += x.mass * x.pos
+            total_mass += x.mass
+        return cg/total_mass
+
+    def _recalculate_orbit_cg(self):  # origin from cg
+        orbit_2 = self.rel_orbit_2 - self.rel_cg
+        orbit_1 = -self.rel_cg
+        return np.array([orbit_1, orbit_2])
 
     def _orbit_eccentricity(self):
         return np.sqrt(1 + 2*self.spec_angular_momemtum_module**2*self.spec_mec_energy/(self.mu**2))
